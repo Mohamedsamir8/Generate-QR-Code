@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advanced QR Code Generator</title>
+    <link rel="icon" href="qr-code.ico" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background: linear-gradient(135deg, #74ebd5, #9face6);
+      }
+      .container {
+        text-align: center;
+        background: white;
+        padding: 20px;
+        margin: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        max-width: 530px;
+        width: 100%;
+        overflow: auto;
+      }
+      h1 {
+        color: #4a90e2;
+        margin-bottom: 20px;
+      }
+      input[type="text"],
+      input[type="color"],
+      input[type="range"] {
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      button {
+        padding: 10px 20px;
+        border: none;
+        background: #4a90e2;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px 0;
+        width: 100%;
+      }
+      button:hover {
+        background: #357abd;
+      }
+      #qrcode {
+        margin: 20px auto;
+        padding: 10px;
+        background: #f9f9f9;
+        border-radius: 10px;
+      }
+      .dropdown {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+      }
+      .dropdown button {
+        display: block;
+        width: 100%;
+      }
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        width: 100%;
+        z-index: 1;
+      }
+      .dropdown-content a {
+        color: black;
+        padding: 10px;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+      }
+      .dropdown-content a:hover {
+        background-color: #ddd;
+      }
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+      .dropdown-content a:last-child {
+        border-bottom: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Advanced QR Code Generator</h1>
+      <input type="text" id="text" placeholder="Enter text or URL" />
+      <label for="foreground">Foreground Color:</label>
+      <input type="color" id="foreground" value="#4A90E2" />
+      <label for="background">Background Color:</label>
+      <input type="color" id="background" value="#ffffff" />
+      <label for="size">Size:</label>
+      <input type="range" id="size" min="100" max="500" value="200" step="50" />
+      <button onclick="generateQRCode()">Generate QR Code</button>
+      <div class="dropdown">
+        <button>Download QR Code</button>
+        <div class="dropdown-content">
+          <a href="#" onclick="downloadQRCode('png')">Download PNG</a>
+          <a href="#" onclick="downloadQRCode('svg')">Download SVG</a>
+        </div>
+      </div>
+      <div id="qrcode"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script>
+      let currentCanvas;
+
+      function generateQRCode() {
+        const qrcodeContainer = document.getElementById("qrcode");
+        const text = document.getElementById("text").value;
+        const foregroundColor = document.getElementById("foreground").value;
+        const backgroundColor = document.getElementById("background").value;
+        const size = parseInt(document.getElementById("size").value);
+
+        qrcodeContainer.innerHTML = "";
+
+        if (text.trim() === "") {
+          alert("Please enter text or a URL!");
+          return;
+        }
+
+        const canvas = document.createElement("canvas");
+        qrcodeContainer.appendChild(canvas);
+        currentCanvas = canvas;
+
+        QRCode.toCanvas(
+          canvas,
+          text,
+          {
+            color: {
+              dark: foregroundColor,
+              light: backgroundColor,
+            },
+            width: size,
+          },
+          function (error) {
+            if (error) console.error(error);
+          }
+        );
+      }
+
+      function downloadQRCode(format) {
+        if (!currentCanvas) {
+          alert("Please generate a QR Code first!");
+          return;
+        }
+
+        const link = document.createElement("a");
+        link.download = `qrcode.${format}`;
+        link.href = currentCanvas.toDataURL(`image/${format}`);
+        link.click();
+      }
+    </script>
+  </body>
+</html>
