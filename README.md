@@ -1,1 +1,1 @@
-Generate QR Code automatic Using JavaScript
+Advanced Generate QR Code automatically Using JavaScript
